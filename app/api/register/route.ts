@@ -31,7 +31,14 @@ export async function POST(req: Request) {
         username,
         email,
         password: hashedPassword,
-        role: "USER", // default role
+        userRoles: {
+          create: {
+            role: "USER",
+          },
+        },
+        userPerms: {
+          create: [], // No default permissions
+        },
       },
     });
 

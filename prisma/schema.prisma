@@ -8,15 +8,34 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String   @unique
+  id        Int              @id @default(autoincrement())
+  email     String           @unique
+  username  String           @unique
   password  String
   name      String?
-  role      Role     @default(USER)
+  userRoles UserRole[] // Junction table relation
+  userPerms UserPermission[] // Junction table relation
   sales     Sales[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+model UserRole {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+  role   Role
+
+  @@unique([userId, role])
+}
+
+model UserPermission {
+  id         Int        @id @default(autoincrement())
+  user       User       @relation(fields: [userId], references: [id])
+  userId     Int
+  permission Permission
+
+  @@unique([userId, permission])
 }
 
 model Product {
@@ -42,6 +61,15 @@ model Sales {
 }
 
 enum Role {
-  USER
   ADMIN
+  STAFF
+  USER
+}
+
+enum Permission {
+  CREATE_PRODUCT
+  READ_PRODUCT
+  UPDATE_PRODUCT
+  DELETE_PRODUCT
+  // Add other permissions as needed
 }
